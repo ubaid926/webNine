@@ -1,1 +1,60 @@
+@font-face {
+    font-family: Outfit;
+    src: url('./fonts/Outfit-Regular.ttf');
+}
+
+
 @import "tailwindcss";
+
+@theme {
+    --font-outfit: Outfit
+}
+
+@layer utilities {
+  /* Bouncy physics entry animation */
+  .animate-bounce-up-in {
+    animation: bounceUpIn 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  /* Smooth snap-out exit animation */
+  .animate-bounce-up-out {
+    animation: bounceUpOut 0.35s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+  }
+}
+
+@keyframes bounceUpIn {
+  0% {
+    transform: translateY(115%);
+    opacity: 0;
+  }
+  65% {
+    transform: translateY(-8%); /* Apne mark se halka sa upar slide karega */
+    opacity: 1;
+  }
+  85% {
+    transform: translateY(3%);  /* Elasticity ke sath thoda sa wapas niche recoil hoga */
+  }
+  100% {
+    transform: translateY(0);   /* Apni final static perfect scale position par lock ho jayega */
+    opacity: 1;
+  }
+}
+
+@keyframes bounceUpOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(5%);  /* Exit hone se pehle halka sa piche ki taraf stretch lega */
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-115%);
+    opacity: 0;
+  }
+}
+
+/* body {
+  font-family: var(--font-outfit);
+} */
