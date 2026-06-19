@@ -1,27 +1,45 @@
-import React, { useState } from 'react';
-import { ChevronDown, Menu, X, Layout, Database, Brain, Smartphone, Palette, CheckCircle, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+import logo from '../assets/Black Logo.png'; // Aapka original logo
 
 export default function AppNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null); // Tracks active mega menu state
-  const [activeDropdown2, setActiveDropdown2] = useState(null); // Tracks active mega menu state
-  const [activeDropdown3, setActiveDropdown3] = useState(null); // Tracks active mega menu state
-  const [activeDropdown4, setActiveDropdown4] = useState(null); // Tracks active mega menu state
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [mobileDropdown, setMobileDropdown] = useState(null);
 
-  const clientLogos = [
-    { name: 'Google', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
-    { name: 'Adobe', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Adobe_Corporate_Logo.svg' },
-    { name: 'Pinterest', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest_Logo.svg' },
-    { name: 'Motorola', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Motorola_new_logo.svg' }
-  ];
+  const timeoutRef = useRef(null);
 
-  const services = [
-    { title: "Front-End Development", desc: "Build modern frontends designed for performance and scale.", tags: ["Front-End", "React", "Angular"], icon: <Layout className="w-6 h-6 text-orange-500" />, bg: "bg-orange-50" },
-    { title: "Back-End Development", desc: "Develop secure, scalable backends that perform under load.", tags: ["Back-End", "Node.js", "Java"], icon: <Database className="w-6 h-6 text-blue-500" />, bg: "bg-blue-50" },
-    { title: "AI and Machine Learning", desc: "Deploy trustworthy AI solutions that create real business value.", tags: ["AI", "Python", "LLMs"], icon: <Brain className="w-6 h-6 text-indigo-500" />, bg: "bg-indigo-50" },
-  ];
+  const toggleMobileDropdown = (menu) => {
+    setMobileDropdown(mobileDropdown === menu ? null : menu);
+  };
 
-  // Mega menu columns data matching image_067ba9.png
+  // Prevent background body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
+  const handleMouseEnter = (menuName) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    setActiveDropdown(null);
+
+    timeoutRef.current = setTimeout(() => {
+      setActiveDropdown(menuName);
+    }, 150);
+  };
+
+  const handleMouseLeave = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setActiveDropdown(null);
+  };
+
   const megaMenuData = {
     topServicesCol1: [
       "AI Development", "Back-end Development", "CMS Development",
@@ -41,243 +59,290 @@ export default function AppNav() {
   };
 
   return (
-    <div className="bg-slate-50 font-outfit text-slate-900 relative ">
+    <div className="bg-slate-50 font-outfit text-slate-900 relative">
 
-      {/* --- TOP HERO SECTION (White Background) --- */}
-      <div className="bg-white   relative">
+      {/* --- BACKGROUND OVERLAY --- */}
+      <div
+        className={`fixed inset-0 bg-black/40 z-30 transition-opacity duration-300 ${activeDropdown ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        onClick={handleMouseLeave}
+      />
+
+      {/* Main Navigation Wrapper */}
+      <div className="relative z-40" onMouseLeave={handleMouseLeave}>
 
         {/* --- HEADER NAVBAR --- */}
-        <header className=" mx-auto px-6 py-5 flex items-center justify-between relative z-50 border-b border-slate-100 shadow-[0_10px_15px_-15px_rgba(0,0,0,0.8)]">
-          <div className="flex items-center space-x-1">
-            <span className="text-2xl font-black tracking-tight text-slate-900">Baires<span className="text-[#F25C22]">Dev</span></span>
+        <header className="w-full mx-auto px-8 py-5 flex items-center justify-between relative z-50 border-b border-slate-100 shadow-[0_10px_15px_-15px_rgba(0,0,0,0.05)] bg-white">
+
+          {/* Logo Container */}
+          <div className="flex items-center justify-start" onMouseEnter={handleMouseLeave}>
+            <img
+              src={logo}
+              alt="Number 9ine"
+              className="h-10 sm:h-18 w-auto object-contain block"
+            />
           </div>
 
           {/* Desktop Navigation Links */}
-
           <div className="hidden lg:block">
-            <nav className="hidden lg:flex items-center space-x-8 text-[15px] font-medium text-slate-600 h-full">
+            <nav className="flex items-center space-x-12 text-[19px] font-semibold text-[#181817]">
 
-              {/* Services Mega Menu Trigger Link */}
+              {/* Services Item */}
               <div
-                className="relative py-2"
-                onMouseEnter={() => {
-                  setTimeout(() => {
-
-                    setActiveDropdown('services')
-                  }, 100);
-                }
-                }
-                onMouseLeave={() => setActiveDropdown(null)}
+                className="relative py-4 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter('services')}
               >
-                <button className={`flex items-center space-x-1 font-bold transition pb-1 ${activeDropdown === 'services' ? 'text-[#F25C22] font-semibold' : 'hover:text-[#F25C22]'}`}>
+                <button className={`flex items-center space-x-1 transition pb-1 ${activeDropdown === 'services' ? 'text-[#11C911]' : 'hover:text-[#11C911]'}`}>
                   <span>Services</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'services' ? 'rotate-180 text-[#F25C22]' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'services' ? 'rotate-180 text-[#11C911]' : ''}`} />
                 </button>
-
-                {/* Active Orange Underline Bar like image_067ba9.png */}
                 {activeDropdown === 'services' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F25C22] rounded-t-full z-50 animate-fade-in" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#11C911] rounded-t-full z-50" />
                 )}
               </div>
-              <div
-                className="relative py-2 "
-                onMouseEnter={() => {
-                  setTimeout(() => {
 
-                    setActiveDropdown2('technologies')
-                  }, 100);
-                }}
-                onMouseLeave={() => setActiveDropdown2(null)}
+              {/* Technologies Item */}
+              <div
+                className="relative py-4 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter('technologies')}
               >
-                <button className={`flex items-center space-x-1 font-bold transition pb-1 ${activeDropdown2 === 'technologies' ? 'text-[#F25C22] font-semibold' : 'hover:text-[#F25C22]'}`}>
+                <button className={`flex items-center space-x-1 transition pb-1 ${activeDropdown === 'technologies' ? 'text-[#11C911]' : 'hover:text-[#11C911]'}`}>
                   <span>Technologies</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown2 === 'technologies' ? 'rotate-180 text-[#F25C22]' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'technologies' ? 'rotate-180 text-[#11C911]' : ''}`} />
                 </button>
-
-                {/* Active Orange Underline Bar like image_067ba9.png */}
-                {activeDropdown2 === 'technologies' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F25C22] rounded-t-full z-50 animate-fade-in" />
+                {activeDropdown === 'technologies' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#11C911] rounded-t-full z-50" />
                 )}
               </div>
+
+              {/* Industries Item */}
               <div
-                className="relative py-2"
-                onMouseEnter={() => {
-                  setTimeout(() => {
-
-                    setActiveDropdown('industries')
-                  }, 100);
-                }
-                }
-                onMouseLeave={() => setActiveDropdown(null)}
+                className="relative py-4 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter('industries')}
               >
-                <button className={`flex items-center space-x-1 font-bold transition pb-1 ${activeDropdown === 'industries' ? 'text-[#F25C22] font-semibold' : 'hover:text-[#F25C22]'}`}>
-                  <span>Industries</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'industries' ? 'rotate-180 text-[#F25C22]' : ''}`} />
+                <button className={`flex items-center space-x-1 transition pb-1 ${activeDropdown === 'industries' ? 'text-[#11C911]' : 'hover:text-[#11C911]'}`}>
+                  <span>Organisations</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'industries' ? 'rotate-180 text-[#11C911]' : ''}`} />
                 </button>
-
-                {/* Active Orange Underline Bar like image_067ba9.png */}
                 {activeDropdown === 'industries' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F25C22] rounded-t-full z-50 animate-fade-in" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#11C911] rounded-t-full z-50" />
                 )}
               </div>
+
+              {/* About Item */}
               <div
-                className="relative py-2"
-                onMouseEnter={() => {
-                  setTimeout(() => {
-                    setActiveDropdown('about')
-
-                  }, 100);
-                }
-                }
-                onMouseLeave={() => setActiveDropdown(null)}
+                className="relative py-4 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter('about')}
               >
-                <button className={`flex items-center space-x-1 transition font-bold pb-1 ${activeDropdown === 'about' ? 'text-[#F25C22] font-semibold' : 'hover:text-[#F25C22]'}`}>
+                <button className={`flex items-center space-x-1 transition pb-1 ${activeDropdown === 'about' ? 'text-[#11C911]' : 'hover:text-[#11C911]'}`}>
                   <span>About</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'about' ? 'rotate-180 text-[#F25C22]' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'about' ? 'rotate-180 text-[#11C911]' : ''}`} />
                 </button>
-
-                {/* Active Orange Underline Bar like image_067ba9.png */}
                 {activeDropdown === 'about' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F25C22] rounded-t-full z-50 animate-fade-in" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#11C911] rounded-t-full z-50" />
                 )}
               </div>
-              <a href="#work" className="font-outfit font-bold hover:text-[#F25C22] transition">Our Work</a>
-              <a href="#work" className="font-bold hover:text-[#F25C22] transition">Blog</a>
-              <button className="bg-black text-white text-sm font-semibold px-5 py-2.5 rounded-sm hover:bg-slate-800 transition">Schedule a Call</button>
+
+              <a href="#work" className="hover:text-[#11C911] transition py-4" onMouseEnter={handleMouseLeave}>Our Work</a>
+              <a href="#blog" className="hover:text-[#11C911] transition py-4" onMouseEnter={handleMouseLeave}>Blog</a>
+
+              <div onMouseEnter={handleMouseLeave}>
+                <button className="bg-black text-white text-[19px] font-semibold px-5 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap">
+                  Schedule a Call
+                </button>
+              </div>
             </nav>
+          </div>
+
+          {/* Interactive Icon toggle */}
+          <div className="lg:hidden flex items-center h-full">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-slate-900 p-2 hover:text-[#11C911] transition-colors focus:outline-none"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-7 h-7 text-slate-900 transition-all duration-200" />
+              ) : (
+                <Menu className="w-7 h-7 text-slate-900 transition-all duration-200" />
+              )}
+            </button>
           </div>
         </header>
 
-        {/* --- MEGA MENU PANEL (image_067ba9.png implementation) --- */}
+        {/* --- DESKTOP MEGA MENU PANEL --- */}
         <div
-          className={`absolute left-0 right-0 bg-white border-b border-slate-200 shadow-xl z-40 transition-all duration-300 transform origin-top ${activeDropdown === 'services' || activeDropdown2 === 'technologies' || activeDropdown === 'industries' || activeDropdown === 'about' ? 'opacity-100 scale-y-100 pointer-events-auto' : 'opacity-0 scale-y-95 pointer-events-none'
+          className={`hidden lg:block absolute left-0 right-0 bg-white border-b border-slate-200 shadow-xl z-40 transition-all duration-300 transform origin-top ${activeDropdown ? 'opacity-100 scale-y-100 pointer-events-auto' : 'opacity-0 scale-y-95 pointer-events-none'
             }`}
-          onMouseEnter={() => setActiveDropdown('services')}
-          onMouseLeave={() => setActiveDropdown(null)}
+          onMouseEnter={() => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          }}
         >
           <div className="w-full mx-auto grid grid-cols-12 min-h-[420px]">
-
-            {/* Left Highlight Sidebar Column (Grey tint block) */}
             <div className="col-span-3 bg-slate-50/80 p-8 border-r border-slate-100 flex flex-col justify-between">
               <div className="space-y-4">
-                <h3 className="text-xl font-bold text-slate-900">Services<span className="text-[#F25C22]">.</span></h3>
+                <h3 className="text-xl font-bold text-slate-900 capitalize">{activeDropdown || 'Services'}<span className="text-[#11C911]">.</span></h3>
                 <p className="text-sm text-slate-500 leading-relaxed">
-                  Get <span className="underline decoration-slate-400 font-medium text-slate-700">software development services</span>, built around your needs:
+                  Get <span className="underline decoration-slate-400 font-medium text-slate-700">software solutions</span>, built around your needs:
                 </p>
                 <ul className="space-y-3 text-sm font-semibold text-slate-700 pt-2">
-                  <li className="hover:text-[#F25C22] cursor-pointer transition">Staff Augmentation</li>
-                  <li className="hover:text-[#F25C22] cursor-pointer transition">Dedicated Teams</li>
-                  <li className="hover:text-[#F25C22] cursor-pointer transition">Software Outsourcing</li>
-                  <li className="hover:text-[#F25C22] cursor-pointer transition">AI Transformation</li>
+                  <li className="inline-block hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5">Staff Augmentation</li>
+                  <br />
+                  <li className="inline-block hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5">Dedicated Teams</li>
+                  <br />
+                  <li className="inline-block hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5">Software Outsourcing</li>
                 </ul>
-              </div>
-
-              {/* Bottom Brand Feature */}
-              <div className="pt-6 border-t border-slate-200/60 space-y-2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Rolls-Royce_Motor_Cars_logo.svg" alt="Rolls Royce" className="h-6 object-contain grayscale opacity-70" />
-                <p className="text-[11px] text-slate-500 leading-tight">
-                  We built an app for real-time nuclear plant monitoring. <span className="underline text-slate-700 font-medium cursor-pointer">Read case study.</span>
-                </p>
               </div>
             </div>
 
-            {/* Right Wide Link Grid Layout */}
-            <div className="col-span-9 p-8 grid grid-cols-3 gap-8 relative bg-white">
-
-              {/* Top Services - Col 1 */}
+            <div className="col-span-9 p-8 grid grid-cols-3 gap-8 bg-white">
+              {/* Column 1 */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-slate-400">
-                  <span className="w-1.5 h-1.5 bg-[#F25C22] rounded-sm"></span>
+                  <span className="w-1.5 h-1.5 bg-[#11C911] rounded-sm"></span>
                   <span>Top Services</span>
                 </div>
-                <ul className="space-y-2.5 text-sm font-medium text-slate-700">
+                <ul className="space-y-2.5 text-sm font-medium text-slate-700 items-start flex flex-col">
                   {megaMenuData.topServicesCol1.map((item, idx) => (
-                    <li key={idx} className="hover:text-[#F25C22] cursor-pointer transition">{item}</li>
+                    <li key={idx} className="hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5 whitespace-nowrap">
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Top Services - Col 2 */}
-              <div className="space-y-4 pt-5"> {/* Offset heading to line up with column 1 */}
-                <ul className="space-y-2.5 text-sm font-medium text-slate-700">
+              {/* Column 2 */}
+              <div className="space-y-4 pt-5">
+                <ul className="space-y-2.5 text-sm font-medium text-slate-700 items-start flex flex-col">
                   {megaMenuData.topServicesCol2.map((item, idx) => (
-                    <li key={idx} className="hover:text-[#F25C22] cursor-pointer transition">{item}</li>
+                    <li key={idx} className="hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5 whitespace-nowrap">
+                      {item}
+                    </li>
                   ))}
                 </ul>
                 <div className="pt-4">
-                  <button className="flex items-center space-x-1 text-sm font-bold text-slate-900 hover:text-[#F25C22] transition">
-                    <span>All Services</span>
+                  <button className="flex items-center space-x-1 text-sm font-bold text-slate-900 hover:text-[#11C911] transition group">
+                    <span className="border-b border-transparent group-hover:border-[#11C911] pb-0.5">All Services</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Enterprise Focused Column */}
+              {/* Column 3 */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-slate-400">
-                  <span className="w-1.5 h-1.5 bg-[#F25C22] rounded-sm"></span>
+                  <span className="w-1.5 h-1.5 bg-[#11C911] rounded-sm"></span>
                   <span>Enterprise Focused</span>
                 </div>
-                <ul className="space-y-2.5 text-sm font-medium text-slate-700">
+                <ul className="space-y-2.5 text-sm font-medium text-slate-700 items-start flex flex-col">
                   {megaMenuData.enterpriseFocused.map((item, idx) => (
-                    <li key={idx} className="hover:text-[#F25C22] cursor-pointer transition">{item}</li>
+                    <li key={idx} className="hover:text-[#11C911] cursor-pointer transition border-b border-transparent hover:border-[#11C911] pb-0.5 whitespace-nowrap">
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
 
-        {/* --- MAIN HERO BODY --- */}
-        {/* <main className="  mx-auto px-6 pt-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* --- MOBILE FULL SCREEN PANEL --- */}
+        <div
+          className={`lg:hidden fixed top-[61px] sm:top-[81px] bottom-0 right-0 left-0 bg-white z-40 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+        >
+          <div className="flex flex-col h-full bg-white border-t border-slate-100">
+            <nav className="flex-1 px-8 pt-8 space-y-6 overflow-y-auto pb-20">
 
-          <div className="lg:col-span-6 relative flex justify-end">
-            <div className="relative w-full max-w-xl aspect-[4/3] rounded-2xl overflow-hidden shadow-sm">
-              <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
-                alt="Engineers Working"
-                className="object-cover h-full w-full opacity-95"
-              />
-              <div className="lg:col-span-6 z-10 space-y-6 text-left absolute ">
-                <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-bold tracking-tight text-slate-900 leading-[1.15]">
-                  Accelerate Your Roadmap With Our Vetted <br />
-                  <span className="text-[#F25C22]">Cloud Engineers</span>
-                </h1>
-                <p className="text-slate-500 text-base sm:text-lg max-w-lg">
-                  Access 4,000+ timezone-aligned, AI-augmented software engineers across 100+ technologies.
-                </p>
-                <button className="bg-[#F25C22] text-white font-medium text-sm px-6 py-3 rounded-md hover:bg-[#d64b18] transition shadow-md">
+              {/* 1. Services Accordion */}
+              <div>
+                <button
+                  onClick={() => toggleMobileDropdown('services')}
+                  className="flex items-center space-x-2 text-[21px] font-bold text-slate-900 tracking-tight"
+                >
+                  <span>Services</span>
+                  <ChevronDown className={`w-[18px] h-[18px] text-slate-600 transition-transform duration-200 ${mobileDropdown === 'services' ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${mobileDropdown === 'services' ? 'max-h-[300px] opacity-100 mt-3 pl-2' : 'max-h-0 opacity-0'}`}>
+                  <div className="space-y-3 border-l-2 border-slate-100 pl-4 text-[15px] font-medium text-slate-600">
+                    {megaMenuData.topServicesCol1.slice(0, 5).map((item, i) => (
+                      <a key={i} href={`#${item}`} className="block hover:text-[#11C911]">{item}</a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Technologies Accordion */}
+              <div>
+                <button
+                  onClick={() => toggleMobileDropdown('technologies')}
+                  className="flex items-center space-x-2 text-[21px] font-bold text-slate-900 tracking-tight"
+                >
+                  <span>Technologies</span>
+                  <ChevronDown className={`w-[18px] h-[18px] text-slate-600 transition-transform duration-200 ${mobileDropdown === 'technologies' ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${mobileDropdown === 'technologies' ? 'max-h-[150px] opacity-100 mt-3 pl-2' : 'max-h-0 opacity-0'}`}>
+                  <div className="space-y-2 border-l-2 border-slate-100 pl-4 text-[15px] font-medium text-slate-600">
+                    <p className="hover:text-[#11C911] cursor-pointer">React & Next.js</p>
+                    <p className="hover:text-[#11C911] cursor-pointer">Node.js Backend</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Industries Accordion */}
+              <div>
+                <button
+                  onClick={() => toggleMobileDropdown('industries')}
+                  className="flex items-center space-x-2 text-[21px] font-bold text-slate-900 tracking-tight"
+                >
+                  <span>Industries</span>
+                  <ChevronDown className={`w-[18px] h-[18px] text-slate-600 transition-transform duration-200 ${mobileDropdown === 'industries' ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${mobileDropdown === 'industries' ? 'max-h-[150px] opacity-100 mt-3 pl-2' : 'max-h-0 opacity-0'}`}>
+                  <div className="space-y-2 border-l-2 border-slate-100 pl-4 text-[15px] font-medium text-slate-600">
+                    <p className="hover:text-[#11C911] cursor-pointer">Fintech Solutions</p>
+                    <p className="hover:text-[#11C911] cursor-pointer">eCommerce Systems</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. About Accordion */}
+              <div>
+                <button
+                  onClick={() => toggleMobileDropdown('about')}
+                  className="flex items-center space-x-2 text-[21px] font-bold text-slate-900 tracking-tight"
+                >
+                  <span>About</span>
+                  <ChevronDown className={`w-[18px] h-[18px] text-slate-600 transition-transform duration-200 ${mobileDropdown === 'about' ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${mobileDropdown === 'about' ? 'max-h-[120px] opacity-100 mt-3 pl-2' : 'max-h-0 opacity-0'}`}>
+                  <div className="space-y-2 border-l-2 border-slate-100 pl-4 text-[15px] font-medium text-slate-600">
+                    <p className="hover:text-[#11C911] cursor-pointer">Our Corporate Profile</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Static Links */}
+              <a href="#work" className="block text-[21px] font-bold text-slate-900 tracking-tight hover:text-[#11C911] transition">
+                Our Work
+              </a>
+
+              <a href="#blog" className="block text-[21px] font-bold text-slate-900 tracking-tight hover:text-[#11C911] transition">
+                Blog
+              </a>
+
+              {/* Bottom Schedule Action Button inside drawer */}
+              <div className="pt-4 max-[769px]:hidden">
+                <button className="w-full bg-black text-white text-sm font-semibold py-3.5 rounded-sm hover:bg-slate-800 transition">
                   Schedule a Call
                 </button>
               </div>
-            </div>
-          </div>
-        </main> */}
-      </div >
 
-      {/* --- LOWER CONTAINER WITH CIRCLE ARCH --- */}
-      {/* < div className="relative -mt-24 bg-slate-50 z-20" >
-        <div className="absolute top-0 left-0 right-0 -translate-y-[99%] w-full pointer-events-none overflow-hidden h-[120px] md:h-[200px]">
-          <svg viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <path d="M0 200C480 50 960 50 1440 200V200H0Z" fill="#f8fafc" />
-          </svg>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-30 pt-4">
-          <div className="text-center pb-20">
-            <p className="text-slate-500 font-medium text-sm mb-6">
-              500+ companies rely on our <span className="underline decoration-[#F25C22] font-semibold text-slate-800">top 1% talent</span> to scale
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-40 grayscale">
-              {clientLogos.map((client) => (
-                <img key={client.name} src={client.logo} alt={client.name} className="h-6 object-contain max-w-[100px]" />
-              ))}
-            </div>
+            </nav>
           </div>
         </div>
-      </div > */}
 
-    </div >
+      </div>
+
+    </div>
   );
 }

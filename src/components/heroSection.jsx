@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+import heroImage from '../assets/ChatGPT Image Jun 19, 2026, 12_32_41 PM.png';
 
-export default function HeroSectionFullWidth() {
+export default function HeroSectionFullWidth({ isDarkened }) {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Navbar scroll visibility behavior
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    // Jin keywords ko aap animate karna chahte hain unki list
+
+    // Keywords list to animate
     const words = ["Brand Activation", "Digital Strategy", "Creative Design", "Seamless Tech"];
 
     const [index, setIndex] = useState(0);
@@ -16,18 +18,17 @@ export default function HeroSectionFullWidth() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            // 1. Pehle current word ko exit slide-out animation trigger karein
             setFadeState("animate-bounce-up-out");
 
             setTimeout(() => {
-                // 2. Index update karein aur naye word ko elastic bouncy entry dein
                 setIndex((prevIndex) => (prevIndex + 1) % words.length);
                 setFadeState("animate-bounce-up-in");
-            }, 350); // Fast snap-out transition duration
-        }, 3200); // Har 3.2 seconds mein text rotate hoga
+            }, 350);
+        }, 3200);
 
         return () => clearInterval(interval);
     }, []);
+
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -47,100 +48,76 @@ export default function HeroSectionFullWidth() {
     }, [lastScrollY]);
 
     const clientLogos = [
-        { name: 'Microsoft', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_2012.svg' },
+        { name: 'Lexus', logo: '../assets/lexusLogo.png' },
         { name: 'PepsiCo', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/PepsiCo_logo.svg' },
         { name: 'Citibank', logo: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Citibank_logo.svg' },
-        { name: 'Lexus', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Lexus_logo.svg' },
+        // { name: 'Lexus', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Lexus_logo.svg' },
         { name: 'Emirates', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg' }
     ];
 
-    const megaMenuData = {
-        topServicesCol1: [
-            "AI Development", "Back-end Development", "CMS Development",
-            "Cryptocurrency & Blockchain", "Front-end Development",
-            "Machine Learning", "QA Testing & Automation", "UX/UI Design"
-        ],
-        topServicesCol2: [
-            "Android App Development", "Business Intelligence", "Data Engineering",
-            "eCommerce Development", "iOS App Development",
-            "Mobile App Development", "SaaS Development", "Web Development"
-        ],
-        enterpriseFocused: [
-            "Backup Solutions", "Big Data", "Cloud Applications",
-            "CRM Systems", "Cybersecurity", "DevOps",
-            "Digital Transformation", "ERP Development"
-        ]
-    };
-
     return (
         <>
+            {/* Main Wrapper: 'isDarkened' toggle hone par brightness auto control hogi.
+              Bina kisi additional overlay ke pure code ko smoothly dark and light karega.
+            */}
+            <div className={`bg-white max-[786px]:bg-slate-100 max-[786px]:pb-20 font-outfit text-slate-900 relative  transition-all duration-300 ${isDarkened ? 'brightness-50 pointer-events-none blur-[1px]' : 'brightness-100'
+                }`}>
 
+                <div className="w-full flex flex-col justify-between relative">
 
-            <div className="  bg-white font-outfit text-slate-900 relative overflow-x-hidden">
+                    {/* Grid Section: 
+                      - Mobile par flex-col-reverse kiya hai taaki text pehle aaye aur image upar chali jaye (or vice-versa, content flow automatic flexible hai).
+                      - Fixed h-[900px] ko hata kar lg:min-h-[calc(100vh-80px)] ya standard responsive layout diya hai.
+                    */}
+                    <div className="w-full grid grid-cols-1 lg:grid-cols-12  min-h-[auto] lg:min-h-[900px]">
 
-                <div className="w-full lg:pt-0 flex flex-col justify-between relative ">
+                        {/* LEFT CONTENT BLOCK */}
+                        {/* LEFT CONTENT BLOCK */}
+                        <div className="col-span-1 lg:col-span-6 xl:col-span-6 pt-12 pb-8 lg:py-14 px-6 sm:px-12 lg:pl-12 xl:pl-45  space-y-6 sm:space-y-8 text-center lg:text-left max-w-2xl lg:max-w-xl xl:max-w-4xl mx-auto lg:mx-0 w-full">
 
-                    <div className=" w-full grid grid-cols-1 lg:grid-cols-12 flex-grow h-[900px]">
-                        <div className="lg:col-span-6 pt-20  px-6 sm:px-12 lg:pl-45 py-12 space-y-8 text-left max-w-2xl lg:max-w-none">
-                            <h1 className=" text-4xl sm:text-5xl lg:text-[60px] font-bold tracking-tight text-slate-900 leading-[1.4]">
-                                Creating Meaningful <br />
-                                Brand Experiences <br />
+                            {/* Font size reduced specifically for lg (1024px) and xl (1440px) */}
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl tracking-wide lg:text-[38px] xl:text-[48px] 2xl:text-[63px] font-semibold tracking-tight text-slate-900 leading-[1.25] lg:leading-[1.4]">
+                                Creating Meaningful <br className="hidden sm:inline lg:hidden xl:inline" />
+                                Brand Experiences <br className="hidden sm:inline lg:hidden xl:inline" />
                                 Through Strategy, <br />
 
-                                <span className="inline-block relative overflow-hidden h-[1.3em] min-w-[440px] align-bottom pb-1">
-                                    <span className={`absolute left-0 text-[#F25C22] block whitespace-nowrap will-change-transform ${fadeState}`}>
+                                {/* Animation container container width scaled down to match smaller font */}
+                                <span className="inline-block relative overflow-hidden h-[1.3em] w-full sm:w-auto sm:min-w-[420px] lg:min-w-[320px] xl:min-w-[400px] 2xl:min-w-[580px] align-bottom pb-1 text-center lg:text-left">
+                                    <span className={`absolute left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 w-fit bg-gradient-to-r from-[#3BA51F] to-[#3FA5D4] bg-clip-text text-transparent block whitespace-nowrap will-change-transform ${fadeState}`}>
                                         {words[index]}
                                     </span>
                                 </span>
                             </h1>
-                            <p className="text-slate-500 text-[22px]   max-w-lg">
+
+                            <p className=" text-slate-500 text-base sm:text-lg lg:text-[18px] xl:text-[24px] max-w-md lg:max-w-sm xl:max-w-xl mx-auto lg:mx-0 leading-snug">
                                 Digital brand activation agency delivering strategy, creativity, technology, and seamless execution.
                             </p>
+
                             <div className="pt-2">
-                                <button className="bg-[#F25C22] text-white font-semibold text-xl px-6 py-3.5 rounded-md hover:bg-[#d64b18] transition shadow-md tracking-wider">
+                                <button className="w-[145px] sm:w-[162px] h-[45px] sm:h-[51px] bg-gradient-to-r from-[#3BA51F] to-[#71C327] text-white font-semibold text-[16px] sm:text-[19px] rounded-[8px] sm:rounded-[10px] hover:shadow-lg transition-all duration-200 inline-flex items-center justify-center whitespace-nowrap leading-none">
                                     Schedule a Call
                                 </button>
                             </div>
                         </div>
 
-                        <div className="lg:col-span-6 h-full min-h-[450px]  relative w-full overflow-hidden">
+                        {/* RIGHT IMAGE BLOCK */}
+                        {/* Mobile par h-[300px] ya md:h-[450px] allocate kiya hai aur desktop (lg) par full height capture karega */}
+                        <div className="bg-orange-200 col-span-1 lg:col-span-6 h-[320px] sm:h-[400px] md:h-[480px] lg:h-full relative w-full overflow-hidden order-first lg:order-last">
 
-                            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent z-20 w-full lg:w-[40%] pointer-events-none" />
-                            <div className="absolute top-0 bottom-0 left-0 right-0 bg-gradient-to-t from-white via-transparent to-transparent z-20 h-[15%] lg:hidden pointer-events-none" />
+                            {/* Gradients to blend smoothly with background */}
+                            <div className="absolute inset-0 bg-gradient-to-b  lg:bg-gradient-to-r from-white via-white/20  to-transparent z-30 w-full lg:w-[40%] pointer-events-none" />
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-transparent to-transparent z-20 h-[30%] lg:hidden pointer-events-none" />
 
                             <img
-                                src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+                                src={heroImage}
                                 alt="Brand Strategy Space"
-                                className="object-cover w-full h-full absolute inset-0 z-10 scale-105"
+                                className="object-cover w-full h-full absolute  inset-0 z-10 scale-105"
                             />
                         </div>
                     </div>
 
-                    <div className="w-full relative  py-12 border-t border-slate-100/50 z-30">
+                    {/* --- TRUSTED LOGOS SECTION --- */}
 
-                        <div className=" absolute top-0 left-0 right-0 -translate-y-[99%] w-full pointer-events-none overflow-hidden h-[80px] md:h-[140px]">
-                            {/* <svg viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full preserve-3d">
-                                <path d="M0 200C480 80 960 80 1440 200V200H0Z" fill="#f8fafc" />
-                            </svg> */}
-                        </div>
-                        <div className="w-full mx-auto px-6 text-center space-y-6">
-                            <p className="text-slate-400 font-bold text-xs tracking-wider uppercase">
-                                Trusted by Global Brands Across North America
-                            </p>
-                            <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-50 grayscale hover:opacity-80 transition duration-300">
-                                {clientLogos.map((client) => (
-                                    <img
-                                        key={client.name}
-                                        src={client.logo}
-                                        alt={client.name}
-                                        className="h-5 sm:h-6 object-contain max-w-[110px]"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
-                      
-                    </div>
 
                 </div>
 
