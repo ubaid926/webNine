@@ -55,6 +55,39 @@
   }
 }
 
+@keyframes marquee-ltr {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes marquee-rtl {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-rtl {
+  animation: marquee-rtl 22s linear infinite;
+}
+
+.animate-marquee-ltr {
+  animation: marquee-ltr 22s linear infinite;
+}
+
+/* Pause on hover over the track container */
+.marquee-track:hover .animate-marquee-rtl,
+.marquee-track:hover .animate-marquee-ltr {
+  animation-play-state: paused;
+}
+
+/* Circular rotating text */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
 
 body {
   /* font-family: var(--font-outfit); */
